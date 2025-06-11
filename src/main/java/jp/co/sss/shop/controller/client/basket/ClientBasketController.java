@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.shop.bean.BasketBean;
-import jp.co.sss.shop.form.ItemForm;
+import jp.co.sss.shop.entity.Item;
+import jp.co.sss.shop.repository.ItemRepository;
 import jp.co.sss.shop.repository.OrderRepository;
 
 @Controller
@@ -20,51 +21,67 @@ public class ClientBasketController {
 	@Autowired
 	OrderRepository orderRepository;
 	
+	@Autowired
+	ItemRepository itemRepository;
+	
 	//買い物かご画面への遷移
 	@RequestMapping(path="/client/basket/list")
 	public String basketList(HttpSession session,Model model) {
+		List<BasketBean> basketCopy = (List<BasketBean>)session.getAttribute("basketBeans");
 		List<BasketBean> beanArray = new ArrayList<>();
 		List<BasketBean> beanArrayPush = new ArrayList<>();
-		beanArray.add(new BasketBean(2,"テストA",2));
-		BasketBean testBean = new BasketBean(3,"テストB",6);
-		testBean.setOrderNum(7);
-		beanArray.add(testBean);
-		beanArray.add(new BasketBean(2,"テストC",0));
-		for(BasketBean bean : beanArray) {
-			if(bean.getStock() <= 0) {
-				model.addAttribute("itemNameListZero",bean.getName());
-			}else if(bean.getOrderNum() > bean.getStock()) {
-				beanArrayPush.add(bean);
-				model.addAttribute("itemNameListLessThan",bean.getName());
-			}else {
-				beanArrayPush.add(bean);
+		if(basketCopy == null || basketCopy.isEmpty()) {
+			//session.setAttribute("basketBeans",beanArray);
+		}else {
+			for(BasketBean bean : basketCopy) {
+				if(bean.getStock() <= 0) {
+					model.addAttribute("itemNameListZero",bean.getName());
+				}else if(bean.getOrderNum() > bean.getStock()) {
+					beanArrayPush.add(bean);
+					model.addAttribute("itemNameListLessThan",bean.getName());
+				}else {
+					beanArrayPush.add(bean);
+				}
 			}
+			session.setAttribute("basketBeans",beanArrayPush);
 		}
-		session.setAttribute("basketBeans",beanArrayPush);
+
 		return "client/basket/list";
 	}
 	
 	//商品を追加
 	@RequestMapping(path="/client/basket/add",method=RequestMethod.POST)
-	public String basketAdd(HttpSession session,ItemForm item) {
+	public String basketAdd(HttpSession session,Item item) {
 		boolean createFlag = false;
-		List<BasketBean> beanArray = (ArrayList<BasketBean>)session.getAttribute("basketBeans");
+		List<BasketBean> basketCopy = (ArrayList<BasketBean>)session.getAttribute("basketBeans");
+		List<BasketBean> beanArray = new ArrayList<>();
 		BasketBean basketInput = new BasketBean();
 		BasketBean basketNow = new BasketBean();
-		for(BasketBean b : beanArray) {
-			if(b.getName().equals(item.getName())) {
-				createFlag = true;
-				basketNow.setOrderNum(basketNow.getOrderNum() + 1);
-				basketNow = b;
-				break;
-			}
-		}
-		if(createFlag) {
-			basketInput = basketNow;
+		Item itemCopy = itemRepository.getReferenceById(item.getId());
+		basketInput.setId(itemCopy.getId());
+		basketInput.setName(itemCopy.getName());
+		basketInput.setOrderNum(1);
+		basketInput.setStock(itemCopy.getStock());
+		
+		if(basketCopy == null || basketCopy.isEmpty()) {
+			beanArray.add(basketInput);
+			session.setAttribute("basketBeans", beanArray);
 		}else {
-			basketInput = new BasketBean(1,item.getName(),item.getStock());
+			for(BasketBean b : basketCopy) {
+				if(b.getName().equals(basketInput.getName())) {
+					createFlag = true;
+					b.setOrderNum(b.getOrderNum() + 1);
+				}
+				beanArray.add(b);
+			}
+			if(!createFlag) {
+				basketInput = new BasketBean(itemCopy.getId(),itemCopy.getName(),itemCopy.getStock());
+				basketInput.setOrderNum(1);
+				beanArray.add(basketInput);
+			}
+			session.setAttribute("basketBeans",beanArray);
 		}
-		session.setAttribute("basketBeans",basketInput);
+
 		return "client/basket/list";
 	}
 	
@@ -103,3 +120,4 @@ public class ClientBasketController {
 	
 	
 }
+
