@@ -29,9 +29,6 @@ public class ClientUserUpdateIController {
 	//入力画面初期表示処理 
 	@RequestMapping(path = "/client/user/update/input",method = RequestMethod.POST)
 	public String updateInputInit(HttpSession session) {
-
-		//IDを条件に変更対象のDBを取得の分を付け加えました
-		//User user = userRepository.getReferenceById(user.getId())
 		//セッションスコープから入力フォームを取得
 		UserForm userForm = (UserForm) session.getAttribute("userForm");
 		
@@ -40,15 +37,17 @@ public class ClientUserUpdateIController {
 			//セッション情報がない場合、変更対象の情報取得
 			UserBean users = (UserBean) session.getAttribute("user");
 			
-			if (user == null) {
+			if (users == null) {
 				//ログインしていない場合、エラー
 				return "redirect:/syserror" ;
 			}
 			
 			//初期表示用のフォーム情報の生成
 			userForm = new UserForm();
+			//IDを条件に変更対象のDBを取得の分を付け加えました
+		        //User user = userRepository.getReferenceById(user.getId())
 			//変更対象の情報をuserFormにコピー
-			BeanUtils.copyProperties(users, userForm);
+			BeanUtils.copyProperties(user, userForm);
 			
 			//変更入力フォームをセッションに保持
 			session.setAttribute("userForm", userForm);
