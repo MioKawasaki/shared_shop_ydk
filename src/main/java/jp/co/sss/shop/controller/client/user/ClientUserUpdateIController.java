@@ -31,7 +31,7 @@ public class ClientUserUpdateIController {
 	public String updateInputInit(HttpSession session) {
 
 		//IDを条件に変更対象のDBを取得の分を付け加えました
-		//User users = userRepository.getReferenceById(user.getId())
+		//User user = userRepository.getReferenceById(user.getId())
 		//セッションスコープから入力フォームを取得
 		UserForm userForm = (UserForm) session.getAttribute("userForm");
 		
@@ -71,12 +71,12 @@ public class ClientUserUpdateIController {
 		}
 		//入力フォーム情報を画面表示設定
 		model.addAttribute("userForm",userForm);
-		
-		BindingResult result = (BindingResult) session.getAttribute("result");
+		//getAttributeとremoveAttributeの()の中をresult→errorsに変更しました。
+		BindingResult result = (BindingResult) session.getAttribute("/*result*/errors");
 		if (result != null) {
 			//セッションにエラー情報がある場合、エラー情報を画面表示設定
 			model.addAttribute("org.springframework.validation.BindingResult.userForm", result);
-			session.removeAttribute("result");
+			session.removeAttribute("/*result/*errors");
 		}
 		//変更入力画面　表示
 		return "/client/user/update_input";
