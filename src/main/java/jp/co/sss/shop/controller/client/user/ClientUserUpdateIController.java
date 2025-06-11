@@ -29,7 +29,9 @@ public class ClientUserUpdateIController {
 	//入力画面初期表示処理 
 	@RequestMapping(path = "/client/user/update/input",method = RequestMethod.POST)
 	public String updateInputInit(HttpSession session) {
-		
+
+		//IDを条件に変更対象のDBを取得の分を付け加えました
+		//User users = userRepository.getReferenceById(user.getId())
 		//セッションスコープから入力フォームを取得
 		UserForm userForm = (UserForm) session.getAttribute("userForm");
 		
