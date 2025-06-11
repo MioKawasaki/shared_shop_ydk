@@ -1,4 +1,4 @@
-package jp.co.sss.shop.controller.client.item;
+package jp.co.sss.shop.controller.client.basket;
 
 import java.util.ArrayList;
 import java.util.List;
