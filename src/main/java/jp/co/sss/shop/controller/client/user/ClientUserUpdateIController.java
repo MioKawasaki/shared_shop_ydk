@@ -38,7 +38,7 @@ public class ClientUserUpdateIController {
 		if (userForm == null) {
 			
 			//セッション情報がない場合、変更対象の情報取得
-			UserBean user = (UserBean) session.getAttribute("user");
+			UserBean users = (UserBean) session.getAttribute("user");
 			
 			if (user == null) {
 				//ログインしていない場合、エラー
@@ -48,7 +48,7 @@ public class ClientUserUpdateIController {
 			//初期表示用のフォーム情報の生成
 			userForm = new UserForm();
 			//変更対象の情報をuserFormにコピー
-			BeanUtils.copyProperties(user, userForm);
+			BeanUtils.copyProperties(users, userForm);
 			
 			//変更入力フォームをセッションに保持
 			session.setAttribute("userForm", userForm);
