@@ -102,7 +102,8 @@ public class ClientUserUpdateIController {
 	    // 入力チェック結果にエラーがある場合
 	    if (result.hasErrors()) {
 	        // エラー情報をセッションに保存
-	        session.setAttribute("result", result);
+		    //resultをerrorsに変えた
+	        session.setAttribute("/*result:/errors", result);
 	        // 変更入力画面表示処理にリダイレクト
 	        return "redirect:/client/user/update/input";
 	    }
