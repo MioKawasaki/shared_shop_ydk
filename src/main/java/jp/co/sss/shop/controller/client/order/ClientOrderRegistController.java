@@ -166,6 +166,10 @@ public class ClientOrderRegistController{
         orderItem.setOrderNum(basket.getOrderNum());
         orderItem.setPrice(item.getPrice());
         orderItem.setSubtotal(basket.getOrderNum() * item.getPrice());
+        
+        //変更（指）↓
+        orderItem.setImage(itemRepository.getReferenceById(item.getId()).getImage());
+        //↑変更
 
         // 合計金額を加算
         totalAmount += orderItem.getSubtotal();
