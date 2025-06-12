@@ -28,7 +28,8 @@ public class ClientUserShowController {
      * @param model 画面へのデータ受け渡し
      * @return 詳細画面のビュー名
      */
-    @RequestMapping(path = "/client/user/detail", method = RequestMethod.GET)
+    //RequestMethodにPOSTを追加しました。
+    @RequestMapping(path = "/client/user/detail", method = {RequestMethod.GET, /*RequestMethod.POST*/)
     public String showClientUserDetail(Model model) {
 
         // ログイン中のユーザー情報をセッションから取得
