@@ -22,31 +22,38 @@ public class ClientUserRegistController {
 	@Autowired
 	UserRepository userRepository;
 	
+	//リンクからの移動
 	@RequestMapping(path="/client/user/regist/input/init")
-	public String registUserInput(Model model) {
+	public String registUserInput(Model model,HttpSession session) {
 		UserForm userForm = new UserForm();
-		model.addAttribute("userForm",userForm);
-		return "client/user/regist_input";
+		session.setAttribute("userSession", userForm);
+		return "redirect:/client/user/regist/input";
 	}
 	
+	//バリデーション関連とチェック画面への遷移
 	@RequestMapping(path="/client/user/regist/check",method=RequestMethod.POST)
 	public String registUserCheck(Model model,@Valid UserForm userForm,BindingResult bindingResult,HttpSession session) {
 		session.setAttribute("userSession", userForm);
 		if(bindingResult.hasErrors()) {
 			model.addAttribute("userForm",userForm);
-			return "client/user/regist_input";
+			session.setAttribute("userError", bindingResult);
+			return "redirect:/client/user/regist/input";
 		}else {
 			model.addAttribute("userForm",userForm);
 			return "client/user/regist_check";
 		}
 	}
 	
-	@RequestMapping(path="/client/user/regist/input",method=RequestMethod.POST)
-	public String registUserReInput(Model model,UserForm userForm,HttpSession session) {
+	//インプット画面への遷移
+	@RequestMapping(path="/client/user/regist/input",method={RequestMethod.POST,RequestMethod.GET})
+	public String registUserReInput(Model model,UserForm userForm,HttpSession session,BindingResult bindingResult) {
+		bindingResult = (BindingResult)session.getAttribute("userError");
+		model.addAttribute("org.springframework.validation.BindingResult.userForm",bindingResult);
 		model.addAttribute("userForm",(UserForm)session.getAttribute("userSession"));
 		return "client/user/regist_input";
 	}
 	
+	//確認画面
 	@RequestMapping(path="/client/user/regist/complete",method= {RequestMethod.GET,RequestMethod.POST})
 	public String registUserComplete(Model model,HttpSession session) {
 		System.out.println("テスト2");
