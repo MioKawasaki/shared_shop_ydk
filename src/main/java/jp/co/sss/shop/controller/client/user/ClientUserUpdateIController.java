@@ -45,7 +45,7 @@ public class ClientUserUpdateIController {
 			//初期表示用のフォーム情報の生成
 			userForm = new UserForm();
 			//IDを条件に変更対象のDBを取得の分を付け加えました
-		        //User user = userRepository.getReferenceById(user.getId())
+		        //User user = userRepository.getReferenceById(users.getId());
 			//変更対象の情報をuserFormにコピー
 			BeanUtils.copyProperties(user, userForm);
 			
