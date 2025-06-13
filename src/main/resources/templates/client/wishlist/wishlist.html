@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{common/layout_5block :: layout(~{::title},~{::body/content()})}">
+
+<head>
+	<title th:text="#{wishlist} + ' | ' + #{shop.title}">ほしいものリスト | ショップタイトル</title>
+	<meta charset="UTF-8" />
+</head>
+
+<body class="user wishlist">
+	<h2 class="title" th:text="#{wishlist}">ほしいものリスト</h2>
+	<!-- 在庫不足メッセージ -->
+	<th:block th:if="${itemNameListLessThan != null || itemNameListZero != null}">
+		<br />
+		<ul class="error_list_no_mark" th:if="${itemNameListLessThan != null}">
+			<li th:each="err : ${itemNameListLessThan}" th:text="#{msg.wishlist.stock.short(${err})}"></li>
+		</ul>
+		<ul class="error_list_no_mark" th:if="${itemNameListZero != null}">
+			<li th:each="err : ${itemNameListZero}" th:text="#{msg.wishlist.stock.none(${err})}"></li>
+		</ul>
+		<br />
+	</th:block>
+	<!-- ほしいものリストが空の場合 -->
+	<div th:if="${wishlistBeans == null || #lists.isEmpty(wishlistBeans)}">
+		<p th:text="#{msg.wishlist.list.none}">ほしいものリストは空です。</p>
+	</div>
+	<!-- ほしいものリストがある場合 -->
+	<th:block th:if="${wishlistBeans != null && !#lists.isEmpty(wishlistBeans)}">
+		<table class="list_table wishlist">
+			<thead>
+				<tr>
+					<th>[[#{data.wishlist.image}]]</th>
+					<th>[[#{data.wishlist.name}]]</th>
+					<th>[[#{data.wishlist.price}]]</th>
+					<th>[[#{data.wishlist.stock}]]</th>
+					<th>[[#{data.wishlist.operate}]]</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="item : ${wishlistBeans}">
+					<td>
+						<img th:src="@{/images/{img}(img=${item.itemImage})}" alt="商品画像"
+							style="width:80px; height:auto;" />
+					</td>
+					<td>
+						<a th:href="@{/client/item/detail/{id}(id=${item.itemId})}" th:text="${item.itemName}">商品名</a>
+					</td>
+					<td th:text="${#numbers.formatDecimal(item.itemPrice, 0, 'COMMA', 0, 'POINT')} + ' 円'">0 円</td>
+					<td>
+						<span th:if="${item.itemStock == 0}" th:text="#{data.out.of.stock}"></span>
+						<span th:if="${item.itemStock > 5}" th:text="#{data.in.stock}"></span>
+						<span th:if="${item.itemStock >= 1 and item.itemStock <= 5}" th:text="${item.itemStock} + ' 個'"></span>
+					</td>
+					<td>
+						<form th:action="@{/client/wishlist/delete}" method="post">
+							<input type="hidden" name="id" th:value="${item.id}" />
+							<input type="submit" value="削除" class="delete" />
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</th:block>
+</body>
+
