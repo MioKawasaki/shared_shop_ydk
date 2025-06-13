@@ -32,9 +32,15 @@ public class ClientItemShowController {
 	@Autowired
 	ItemRepository itemRepository;
 	
+	/**
+	 * 注文商品情報
+	 */
 	@Autowired
 	OrderItemRepository orderItemRepository;
 
+	/**
+	 * ほしいもの情報
+	 */
 	@Autowired
 	WishlistItemRepository wishlistItemRepository;
 
@@ -44,6 +50,9 @@ public class ClientItemShowController {
 	@Autowired
 	BeanTools beanTools;
 	
+	/**
+	 * セッション情報
+	 */
 	@Autowired
 	HttpSession session;
 	
@@ -55,15 +64,30 @@ public class ClientItemShowController {
 	 */
 	@RequestMapping(path = "/" , method = { RequestMethod.GET, RequestMethod.POST })
 	public String index(Model model) {
+		
+		// 表示順を売れ筋順に初期化
 		int sortType = 2;
+		
+		// 売れ筋順の注文商品情報を検索
 		List<Item> item = orderItemRepository.findByOrderItemSumQuantity(0, 0);
+		
+		// 売れ筋順の注文商品情報がない場合
 		if (item.isEmpty()) {
+			
+			// 新着順の商品情報を検索
 			item = itemRepository.findByCategoryIdOrderByInsertDateDesc(0, 0);
+			
+			// 表示順を新着順に変更
 			sortType = 1;
 		}
+		
+		// 商品情報Beanにコピー
 		List<ItemBean> itemBean = beanTools.copyEntityListToItemBeanList(item);
+		
+		// Viewへ値渡し
 		model.addAttribute("items", itemBean);
 		model.addAttribute("sortType", sortType);
+		
 		return "index";
 	}
 	
@@ -77,12 +101,23 @@ public class ClientItemShowController {
 	 */
 	@RequestMapping(path = "/client/item/list/{sortType}", method = { RequestMethod.GET, RequestMethod.POST })
 	public String listSort(@PathVariable Integer sortType, Integer categoryId, Model model) {
+		
+		// 商品情報を新着順で検索
 		List<Item> item = itemRepository.findByCategoryIdOrderByInsertDateDesc(categoryId, 0);
+		
+		// 表示順が売れ筋順の場合
 		if (sortType == 2) {
+			
+			// 注文商品情報を売れ筋順で検索
 			item = orderItemRepository.findByOrderItemSumQuantity(categoryId, 0);
 		}
+		
+		// 商品情報Beanにコピー
 		List<ItemBean> itemBean = beanTools.copyEntityListToItemBeanList(item);
+		
+		// Viewへ値渡し
 		model.addAttribute("items", itemBean);
+		
 		return "client/item/list";
 	}
 	
@@ -95,18 +130,36 @@ public class ClientItemShowController {
 	 */
 	@RequestMapping(path = "client/item/detail/{id}", method = { RequestMethod.GET, RequestMethod.POST })
 	public String listDetail(@PathVariable Integer id, Model model) {
+		
+		// 商品情報を主キー検索
 		Item item = itemRepository.getReferenceById(id);
+		
+		// 商品情報Beanにコピー
 		ItemBean itemBean = beanTools.copyEntityToItemBean(item);
+		
+		// Viewへ値渡し
 		model.addAttribute("item", itemBean);
+		
 		// ほしいものリストへ追加ボタンのための処理
+		// ユーザ情報を取得
 		UserBean user = ((UserBean)session.getAttribute("user"));
+		
+		// ほしいものリスト登録判定をfalseに初期化
 		boolean inWishlist = false;
+		
+		// ログインされている場合
 		if (user != null) {
+			
+			// ユーザが商品をほしいものリストに登録しているか検索
 			WishlistItem wishlistItem = wishlistItemRepository.findItemIdByWishlistItem(id, user.getId());
+			
+			// 登録されている場合、ほしいものリスト登録判定にtrueを代入
 			inWishlist = (wishlistItem != null);
 		}
+		
+		// Viewへ値渡し
 		model.addAttribute("inWishlist", inWishlist);
+		
 		return "client/item/detail";
 	}
 }
-
