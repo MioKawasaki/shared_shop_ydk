@@ -22,7 +22,7 @@
 	</th:block>
 	<!-- ほしいものリストが空の場合 -->
 	<div th:if="${wishlistBeans == null || #lists.isEmpty(wishlistBeans)}">
-		<p th:text="#{msg.wishlist.list.none}">ほしいものリストは空です。</p>
+		<p th:text="#{msg.wishlist.list.none}"></p>
 	</div>
 	<!-- ほしいものリストがある場合 -->
 	<th:block th:if="${wishlistBeans != null && !#lists.isEmpty(wishlistBeans)}">
