@@ -140,6 +140,7 @@ header {
 .navi_area {
 	background: #edf9fe;
 }
+/*--- 変更 ---*/
 .navi_menu {
 	display: flex;
 	width: 1000px;
