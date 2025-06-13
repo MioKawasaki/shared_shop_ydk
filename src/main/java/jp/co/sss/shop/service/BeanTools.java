@@ -11,10 +11,12 @@ import jp.co.sss.shop.bean.CategoryBean;
 import jp.co.sss.shop.bean.ItemBean;
 import jp.co.sss.shop.bean.OrderBean;
 import jp.co.sss.shop.bean.OrderItemBean;
+import jp.co.sss.shop.bean.WishlistItemBean;
 import jp.co.sss.shop.entity.Category;
 import jp.co.sss.shop.entity.Item;
 import jp.co.sss.shop.entity.Order;
 import jp.co.sss.shop.entity.OrderItem;
+import jp.co.sss.shop.entity.WishlistItem;
 import jp.co.sss.shop.form.ItemForm;
 
 /**
@@ -218,5 +220,30 @@ public class BeanTools {
 			orderItemBeanList.add(orderItemBean);
 		}
 		return orderItemBeanList;
+	}
+	
+	/**
+	 * WishlistItemエンティティのリストから、WishlistItemBeanのリストを生成
+	 * 
+	 * @param wishlistItemList
+	 * @return
+	 */
+	public List<WishlistItemBean> generateWishlistItemBeanList(List<WishlistItem> wishlistItemList) {
+		
+		// ほしいものリスト情報を取得
+		List<WishlistItemBean> wishlistItemBeanList = new ArrayList<WishlistItemBean>();
+		for (WishlistItem wishlistItem : wishlistItemList) {
+			WishlistItemBean wishlistItemBean = new WishlistItemBean();
+			
+			BeanUtils.copyProperties(wishlistItem, wishlistItemBean);
+			wishlistItemBean.setItemId(wishlistItem.getItem().getId());
+			wishlistItemBean.setItemImage(wishlistItem.getItem().getImage());
+			wishlistItemBean.setItemName(wishlistItem.getItem().getName());
+			wishlistItemBean.setItemPrice(wishlistItem.getItem().getPrice());
+			wishlistItemBean.setItemStock(wishlistItem.getItem().getStock());
+			
+			wishlistItemBeanList.add(wishlistItemBean);
+		}
+		return wishlistItemBeanList;
 	}
 }
