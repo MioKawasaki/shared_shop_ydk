@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.shop.bean.BasketBean;
 import jp.co.sss.shop.entity.Item;
+import jp.co.sss.shop.form.basketBeanForm;
 import jp.co.sss.shop.repository.ItemRepository;
 import jp.co.sss.shop.repository.OrderRepository;
 
@@ -27,22 +28,46 @@ public class ClientBasketController {
 	//買い物かご画面への遷移
 	@RequestMapping(path="/client/basket/list")
 	public String basketList(HttpSession session,Model model) {
+		//リスト
 		List<BasketBean> basketCopy = (List<BasketBean>)session.getAttribute("basketBeans");
 		List<BasketBean> beanArray = new ArrayList<>();
 		List<BasketBean> beanArrayPush = new ArrayList<>();
+		List<basketBeanForm> basketForms = new ArrayList<>();
+		//総額
+		int total = 0;
 		if(basketCopy == null || basketCopy.isEmpty()) {
 			//session.setAttribute("basketBeans",beanArray);
 		}else {
 			for(BasketBean bean : basketCopy) {
+				//表示用のフォーム
+				basketBeanForm beanCopy = new basketBeanForm();
+				beanCopy.setId(bean.getId());
+				beanCopy.setName(bean.getName());
+				beanCopy.setOrderNum(bean.getOrderNum());
+				beanCopy.setStock(bean.getStock());
+				beanCopy.setPrice(itemRepository.getReferenceById(bean.getId()).getPrice());
+				
+				//エラー処理と要素の代入
 				if(bean.getStock() <= 0) {
 					model.addAttribute("itemNameListZero",bean.getName());
 				}else if(bean.getOrderNum() > bean.getStock()) {
 					beanArrayPush.add(bean);
+					basketForms.add(beanCopy);
 					model.addAttribute("itemNameListLessThan",bean.getName());
 				}else {
+					basketForms.add(beanCopy);
 					beanArrayPush.add(bean);
+					
+				}
+				
+				//総額を計算
+				if(bean.getStock() > 0) {
+					total += (bean.getOrderNum() * itemRepository.getReferenceById(bean.getId()).getPrice());
 				}
 			}
+			//リクエストスコープとセッションスコープに要素を代入
+			model.addAttribute("basketTotal",total);
+			model.addAttribute("basketBeans",basketForms);
 			session.setAttribute("basketBeans",beanArrayPush);
 		}
 
@@ -79,24 +104,27 @@ public class ClientBasketController {
 				basketInput.setOrderNum(1);
 				beanArray.add(basketInput);
 			}
+			//セッションに代入
 			session.setAttribute("basketBeans",beanArray);
 		}
 
-		return "client/basket/list";
+		return "redirect:/client/basket/list";
 	}
 	
 	//商品をすべて削除
 	@RequestMapping(path="/client/basket/allDelete")
 	public String basketAllDelete(HttpSession session) {
+		//買い物かご情報のセッションを削除しnullを代入
 		session.removeAttribute("basketBeans");
 		session.setAttribute("basketBeans", null);
-		//リダイレクトに変更
-		return "client/basket/list";
+		
+		return "redirect:/client/basket/list";
 	}
 	
 	//選択した商品を削除
 	@RequestMapping(path="/client/basket/delete",method=RequestMethod.POST)
 	public String basketDelete(HttpSession session,long id) {
+		//リスト
 		List<BasketBean> beanArray = (ArrayList<BasketBean>)session.getAttribute("basketBeans");
 		List<BasketBean> beanArrayCopy = new ArrayList<>();
 		int count = 0;
@@ -112,12 +140,12 @@ public class ClientBasketController {
 		if(beanArrayCopy.size() == 0) {
 			beanArrayCopy = null;
 		}
+		//セッションに代入
 		session.removeAttribute("basketBeans");
 		session.setAttribute("basketBeans", beanArrayCopy);
-		//リダイレクトに変更
-		return "client/basket/list";
+		
+		return "redirect:/client/basket/list";
 	}
 	
 	
 }
-
