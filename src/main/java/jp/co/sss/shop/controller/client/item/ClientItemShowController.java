@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import jakarta.servlet.http.HttpSession;
 import jp.co.sss.shop.bean.ItemBean;
+import jp.co.sss.shop.bean.UserBean;
 import jp.co.sss.shop.entity.Item;
+import jp.co.sss.shop.entity.WishlistItem;
 import jp.co.sss.shop.repository.ItemRepository;
 import jp.co.sss.shop.repository.OrderItemRepository;
+import jp.co.sss.shop.repository.WishlistItemRepository;
 import jp.co.sss.shop.service.BeanTools;
 
 /**
@@ -31,11 +35,17 @@ public class ClientItemShowController {
 	@Autowired
 	OrderItemRepository orderItemRepository;
 
+	@Autowired
+	WishlistItemRepository wishlistItemRepository;
+
 	/**
 	 * Entity、Form、Bean間のデータコピーサービス
 	 */
 	@Autowired
 	BeanTools beanTools;
+	
+	@Autowired
+	HttpSession session;
 	
 	/**
 	 * トップ画面 表示処理
@@ -88,6 +98,15 @@ public class ClientItemShowController {
 		Item item = itemRepository.getReferenceById(id);
 		ItemBean itemBean = beanTools.copyEntityToItemBean(item);
 		model.addAttribute("item", itemBean);
+		// ほしいものリストへ追加ボタンのための処理
+		UserBean user = ((UserBean)session.getAttribute("user"));
+		boolean inWishlist = false;
+		if (user != null) {
+			WishlistItem wishlistItem = wishlistItemRepository.findItemIdByWishlistItem(id, user.getId());
+			inWishlist = (wishlistItem != null);
+		}
+		model.addAttribute("inWishlist", inWishlist);
 		return "client/item/detail";
 	}
 }
+
