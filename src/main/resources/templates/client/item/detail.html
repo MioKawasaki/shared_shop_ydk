@@ -30,6 +30,18 @@
 				<dd th:text="*{categoryName}"></dd>
 				<dt>[[#{data.description}]]</dt>
 				<dd th:text="*{description}"></dd>
+				<!-- ほしいものリスト -->
+				<form th:action="@{/client/wishlist/add}" method="post">
+					<input type="hidden" th:name="id" th:value="*{id}" />
+					<!-- ほしいものリストに追加されている場合（赤色・無効） -->
+					<button type="submit" class="btn-red" disabled th:if="${inWishlist}">
+					♡ ほしいものリストに追加済み
+					</button>
+					<!-- ほしいものリストに追加されていない場合（通常ボタン） -->
+					<button type="submit" class="btn-default" th:if="${!inWishlist}">
+					♡ ほしいものリストに追加
+					</button>
+				</form>
 			</dl>
 		</div>
 		<div class="detail_button_area">
