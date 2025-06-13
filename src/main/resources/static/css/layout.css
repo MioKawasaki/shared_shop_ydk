@@ -1,4 +1,4 @@
-﻿@charset "UTF-8";
+@charset "UTF-8";
 
 /* ---- 共通 ---- */
 /* スキルアップテクニック1-1
@@ -141,7 +141,8 @@ header {
 	background: #edf9fe;
 }
 .navi_menu {
-	width: 960px;
+	display: flex;
+	width: 1000px;
 	padding:12px 0;
 	margin: 0 auto;
 }
