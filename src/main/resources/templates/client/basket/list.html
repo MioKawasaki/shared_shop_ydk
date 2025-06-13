@@ -24,20 +24,21 @@
 		<br />
 	</th:block>
 
-	<div th:if="${session.basketBeans == null}">
+	<div th:if="${basketBeans == null}">
 		<!--/* 買い物かごが空のとき */-->
 		<p th:text="#{msg.basket.list.none}"></p>
 	</div>
 
-	<th:block th:if="${session.basketBeans != null}">
+	<th:block th:if="${basketBeans != null}">
 		<table class="list_table basket">
 			<tr>
 				<th>[[#{data.basket.item.name}]]</th>
 				<th>[[#{data.basket.count}]]</th>
 				<th>[[#{data.basket.operate}]]</th>
 				<th>[[#{data.basket.stock.status}]]</th>
+				<th>単価</th>
 			</tr>
-			<tr th:each="item, status: ${session.basketBeans}">
+			<tr th:each="item, status: ${basketBeans}">
 				<td><a th:href="@{/client/item/detail/{id}(id=${item.id})}" th:text="${item.name}"></a></td>
 				<td th:text="${item.orderNum}"></td>
 				<td>
@@ -49,6 +50,7 @@
 				<td th:if="${item.stock == 0}" th:text="#{data.out.of.stock}"></td>
 				<td th:if="${item.stock > 5}" th:text="#{data.in.stock}"></td>
 				<td th:if="${item.stock >= 1 and 5 >= item.stock }" th:text="${item.stock}"></td>
+				<td th:text="${item.price}+円"></td>
 			</tr>
 		</table>
 		<div class="user_info_form_area shopping_button">
@@ -60,6 +62,9 @@
 			<form th:action="@{/client/basket/allDelete}" method="post">
 				<input type="submit" value="買い物かごを空にする" class="delete" />
 			</form>
+			<tr>
+			    <td th:text="合計：+${basketTotal}+円"></td>
+		    </tr>
 		</div>
 	</th:block>
 </body>
