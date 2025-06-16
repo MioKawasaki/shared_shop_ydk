@@ -20,8 +20,20 @@
 		</ul>
 		<br />
 	</th:block>
+	<br>
+	<!-- 検索フォーム（ほしいものリストが空でない場合のみ表示） -->
+	<th:block th:if="${wishlistBeans != null && !#lists.isEmpty(wishlistBeans) || search != null}">
+		<form th:action="@{/client/wishlist/search}">
+			<input type="text" name="search" th:value="${search}">
+			<input type="submit" th:value="#{select}">
+		</form>
+	</th:block>
+	<!-- 検索結果がない場合 -->
+	<div th:if="${search != null and (wishlistBeans == null or #lists.isEmpty(wishlistBeans))}">
+   		<p>検索結果はありません。</p>
+	</div>
 	<!-- ほしいものリストが空の場合 -->
-	<div th:if="${wishlistBeans == null || #lists.isEmpty(wishlistBeans)}">
+	<div th:if="${(search == null or #strings.isEmpty(search)) and (wishlistBeans == null or #lists.isEmpty(wishlistBeans))}">
 		<p th:text="#{msg.wishlist.list.none}"></p>
 	</div>
 	<!-- ほしいものリストがある場合 -->
