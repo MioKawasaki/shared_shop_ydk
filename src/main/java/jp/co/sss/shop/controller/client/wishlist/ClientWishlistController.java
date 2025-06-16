@@ -122,4 +122,33 @@ public class ClientWishlistController {
 		
 		return "redirect:/client/wishlist/list";
 	}
+	/**
+	 * ほしいものリスト画面 検索フォーム
+	 * 
+	 * @param search 検索キーワード
+	 * @return "client/wishlist/wishlist" 表示処理に移動
+	 */
+	@RequestMapping(path = "/client/wishlist/search", method = RequestMethod.GET)
+	public String wishlist(@RequestParam(value = "search", required = false) String search, Model model) {
+	    // ログイン中のユーザのIDを取得
+	    Integer userId = ((UserBean) session.getAttribute("user")).getId();
+
+	    // 検索キーワードが存在する場合、商品名にキーワードが含まれるほしいものリストを取得
+	    List<WishlistItem> wishlistItems;
+	    if (search != null && !search.isEmpty()) {
+	        wishlistItems = wishlistItemRepository.findByUserIdAndItemNameContainingIgnoreCase(userId, search);
+	    } else {
+	        // 検索キーワードがない場合、全てのほしいものリストを取得
+	        wishlistItems = wishlistItemRepository.findUserIdByWishlistItemOrderByInsertDate(userId);
+	    }
+
+	    // Beanにコピー
+	    List<WishlistItemBean> wishlistItemBeans = beanTools.generateWishlistItemBeanList(wishlistItems);
+
+	    // Viewに値渡し
+	    model.addAttribute("wishlistBeans", wishlistItemBeans);
+	    model.addAttribute("search", search); // 検索キーワードをモデルに追加
+
+	    return "client/wishlist/wishlist";
+	}
 }
