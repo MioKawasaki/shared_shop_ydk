@@ -24,7 +24,7 @@
 	<!-- 検索フォーム（ほしいものリストが空でない場合のみ表示） -->
 	<th:block th:if="${wishlistBeans != null && !#lists.isEmpty(wishlistBeans) || search != null}">
 		<form th:action="@{/client/wishlist/search}">
-			<input type="text" name="search" th:value="${search}">
+			<input type="search" name="search" placeholder="商品名で検索" th:value="${search}">
 			<input type="submit" th:value="#{select}">
 		</form>
 	</th:block>
