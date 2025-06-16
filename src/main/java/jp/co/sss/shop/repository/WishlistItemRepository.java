@@ -22,4 +22,8 @@ public interface WishlistItemRepository extends JpaRepository<WishlistItem, Inte
 	// 会員IDを条件に新着順でほしいもの情報を検索
 	@Query("SELECT w FROM WishlistItem w WHERE w.user.id = :id ORDER BY w.insertDate DESC")
 	List<WishlistItem> findUserIdByWishlistItemOrderByInsertDate(@Param("id") Integer id);
+
+	// 会員IDを条件に商品名を対象とした曖昧検索
+	@Query("SELECT w FROM WishlistItem w WHERE w.user.id = :userId AND LOWER(w.item.name) LIKE LOWER(CONCAT('%', :search, '%'))")
+	List<WishlistItem> findByUserIdAndItemNameContainingIgnoreCase(@Param("userId") Integer userId, @Param("search") String search);
 }
