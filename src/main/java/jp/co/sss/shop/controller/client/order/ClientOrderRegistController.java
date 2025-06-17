@@ -175,8 +175,8 @@ public class ClientOrderRegistController{
         totalAmount += orderItem.getSubtotal();
         orderItemList.add(orderItem);
             }
- 
-		model.addAttribute("totalAmount", totalAmount);
+        保存する形を"totalamount"から"total"に変更しました
+		model.addAttribute("totalAmount//total//", totalAmount);
 		model.addAttribute("orderItemBeans", orderItemList);
 		model.addAttribute("orderForm", orderForm);
 		return "client/order/check";
