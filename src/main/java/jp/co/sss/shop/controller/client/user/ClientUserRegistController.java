@@ -54,24 +54,32 @@ public class ClientUserRegistController {
 	}
 	
 	//確認画面
-	@RequestMapping(path="/client/user/regist/complete",method= {RequestMethod.GET,RequestMethod.POST})
+	@RequestMapping(path="/client/user/regist/complete",method=RequestMethod.POST)
 	public String registUserComplete(Model model,HttpSession session) {
-		System.out.println("テスト2");
-		UserForm userForm = (UserForm)session.getAttribute("userSession");
-		User user = new User();
-		user.setEmail(userForm.getEmail());
-		user.setPassword(userForm.getPassword());
-		user.setName(userForm.getName());
-		user.setPostalCode(userForm.getPostalCode());
-		user.setAddress(userForm.getAddress());
-		user.setPhoneNumber(userForm.getPhoneNumber());
-		user.setAuthority(2);
-		user.setDeleteFlag(0);
-		long sqlDateNow = System.currentTimeMillis();
-		Date now = new Date(sqlDateNow);
-		user.setInsertDate(now);
-		userRepository.save(user);
-		session.removeAttribute("userSession");
+		Object flag = session.getAttribute("userSession");
+		if(flag != null) {
+			UserForm userForm = (UserForm)session.getAttribute("userSession");
+			User user = new User();
+			user.setEmail(userForm.getEmail());
+			user.setPassword(userForm.getPassword());
+			user.setName(userForm.getName());
+			user.setPostalCode(userForm.getPostalCode());
+			user.setAddress(userForm.getAddress());
+			user.setPhoneNumber(userForm.getPhoneNumber());
+			user.setAuthority(2);
+			user.setDeleteFlag(0);
+			long sqlDateNow = System.currentTimeMillis();
+			Date now = new Date(sqlDateNow);
+			user.setInsertDate(now);
+			userRepository.save(user);
+			session.removeAttribute("userSession");
+		}
+		return "redirect:/client/user/regist/complete";
+	}
+
+	//画面遷移
+	@RequestMapping(path="/client/user/regist/complete",method=RequestMethod.GET)
+	public String registUserReLoad() {
 		return "client/user/regist_complete";
 	}
 }
