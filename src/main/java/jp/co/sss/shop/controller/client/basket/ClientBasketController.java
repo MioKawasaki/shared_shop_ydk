@@ -51,6 +51,10 @@ public class ClientBasketController {
 				if(bean.getStock() <= 0) {
 					model.addAttribute("itemNameListZero",bean.getName());
 				}else if(bean.getOrderNum() > bean.getStock()) {
+					//↓追加箇所
+					bean.setOrderNum(bean.getStock());
+					beanCopy.setOrderNum(bean.getStock());
+					//追加箇所↑
 					beanArrayPush.add(bean);
 					basketForms.add(beanCopy);
 					model.addAttribute("itemNameListLessThan",bean.getName());
