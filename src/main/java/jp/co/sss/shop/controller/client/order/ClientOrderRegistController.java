@@ -238,8 +238,7 @@ public class ClientOrderRegistController{
             orderItem.setQuantity(basket.getOrderNum());
 
             orderItemRepository.save(orderItem);
-
-	　　// 在庫を減少させる
+		//在庫を減少させる
             item.setStock(item.getStock() - basket.getOrderNum());
             itemRepository.save(item);
         }
