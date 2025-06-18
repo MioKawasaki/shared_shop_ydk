@@ -45,23 +45,20 @@ public class ClientOrderRegistController{
      * 注文フォームを初期化し、届け先入力画面を表示
      */
 	@RequestMapping(path = "/client/order/address/input", method = RequestMethod.POST)
-	public String orderFormDisplay(Model model) {
-		 // 注文フォームの初期化
-	    OrderForm sessionOrderForm = new OrderForm();
-
+	public String orderFormDisplay(Model model, OrderForm orderForm) {
 	    // セッションスコープからログインユーザ情報を取得
 	    UserBean user = (UserBean) session.getAttribute("user"); 
 	    User users = userRepository.getReferenceById(user.getId());
 	    // ユーザ情報を注文フォーム情報に設定
-	    sessionOrderForm.setPostalCode(users.getPostalCode());
-	    sessionOrderForm.setName(users.getName());
-	    sessionOrderForm.setAddress(users.getAddress());
-	    sessionOrderForm.setPhoneNumber(users.getPhoneNumber());
-	    sessionOrderForm.setPayMethod(1); // 支払方法の初期値を設定
-
+	    orderForm.setPostalCode(users.getPostalCode());
+	    orderForm.setName(users.getName());
+	    orderForm.setAddress(users.getAddress());
+	    orderForm.setPhoneNumber(users.getPhoneNumber());
+	    orderForm.setPayMethod(1); // 支払方法の初期値を設定
+	    
 	    // 注文フォーム情報をセッションスコープに保存
-	    model.addAttribute("orderForm", sessionOrderForm);
-	    session.setAttribute("orderForm", sessionOrderForm);
+	    model.addAttribute("orderForm", orderForm);
+	    session.setAttribute("orderForm", orderForm);
 
 	    // 届け先入力画面にリダイレクト
 	    return "client/order/address_input";
@@ -72,6 +69,7 @@ public class ClientOrderRegistController{
      */
 	@RequestMapping(path = "/client/order/address/input", method = RequestMethod.GET)
 	public String orderDeliverd(@ModelAttribute @Valid OrderForm orderForm, BindingResult result, Model model) {
+		orderForm = (OrderForm) session.getAttribute("orderForm");
 		model.addAttribute("orderForm", orderForm);
 		
 		// セッションからエラー情報を取得
@@ -88,6 +86,7 @@ public class ClientOrderRegistController{
      */
     @RequestMapping(path = "/client/order/payment/input", method = RequestMethod.POST)
 	public String orderNextPayment(@Valid @ModelAttribute OrderForm orderForm, BindingResult result, Model model) {
+    	session.setAttribute("orderForm", orderForm);
 		if(result.hasErrors()) {
 			// エラー情報をセッションに保存
 			session.setAttribute("errors", result);
