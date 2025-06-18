@@ -71,11 +71,11 @@ public class ClientUserUpdateIController {
 		//入力フォーム情報を画面表示設定
 		model.addAttribute("userForm",userForm);
 		//getAttributeとremoveAttributeの()の中をresult→errorsに変更しました。
-		BindingResult result = (BindingResult) session.getAttribute("/*result*/errors");
+		BindingResult result = (BindingResult) session.getAttribute("errors");
 		if (result != null) {
 			//セッションにエラー情報がある場合、エラー情報を画面表示設定
 			model.addAttribute("org.springframework.validation.BindingResult.userForm", result);
-			session.removeAttribute("/*result/*errors");
+			session.removeAttribute("errors");
 		}
 		//変更入力画面　表示
 		return "/client/user/update_input";
@@ -103,7 +103,7 @@ public class ClientUserUpdateIController {
 	    if (result.hasErrors()) {
 	        // エラー情報をセッションに保存
 		    //resultをerrorsに変えた
-	        session.setAttribute("/*result:/errors", result);
+	        session.setAttribute("errors", result);
 	        // 変更入力画面表示処理にリダイレクト
 	        return "redirect:/client/user/update/input";
 	    }
