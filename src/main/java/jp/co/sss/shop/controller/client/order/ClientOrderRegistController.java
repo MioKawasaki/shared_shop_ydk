@@ -45,23 +45,23 @@ public class ClientOrderRegistController{
      * 注文フォームを初期化し、届け先入力画面を表示
      */
 	@RequestMapping(path = "/client/order/address/input", method = RequestMethod.POST)
-	public String orderFormDisplay(Model model, OrderForm orderForm) {
+	public String orderFormDisplay(Model model) {
 		 // 注文フォームの初期化
-	        orderForm = new OrderForm();
+	    OrderForm sessionOrderForm = new OrderForm();
 
 	    // セッションスコープからログインユーザ情報を取得
 	    UserBean user = (UserBean) session.getAttribute("user"); 
 	    User users = userRepository.getReferenceById(user.getId());
 	    // ユーザ情報を注文フォーム情報に設定
-	    orderForm.setPostalCode(users.getPostalCode());
-	    orderForm.setName(users.getName());
-	    orderForm.setAddress(users.getAddress());
-	    orderForm.setPhoneNumber(users.getPhoneNumber());
-	    orderForm.setPayMethod(1); // 支払方法の初期値を設定
+	    sessionOrderForm.setPostalCode(users.getPostalCode());
+	    sessionOrderForm.setName(users.getName());
+	    sessionOrderForm.setAddress(users.getAddress());
+	    sessionOrderForm.setPhoneNumber(users.getPhoneNumber());
+	    sessionOrderForm.setPayMethod(1); // 支払方法の初期値を設定
 
 	    // 注文フォーム情報をセッションスコープに保存
-	    model.addAttribute("orderForm", orderForm);
-	    session.setAttribute("orderForm", orderForm);
+	    model.addAttribute("orderForm", sessionOrderForm);
+	    session.setAttribute("orderForm", sessionOrderForm);
 
 	    // 届け先入力画面にリダイレクト
 	    return "client/order/address_input";
@@ -72,8 +72,6 @@ public class ClientOrderRegistController{
      */
 	@RequestMapping(path = "/client/order/address/input", method = RequestMethod.GET)
 	public String orderDeliverd(@ModelAttribute @Valid OrderForm orderForm, BindingResult result, Model model) {
-		// セッションから注文フォームを取得
-		orderForm = (OrderForm) session.getAttribute("orderForm");
 		model.addAttribute("orderForm", orderForm);
 		
 		// セッションからエラー情報を取得
@@ -90,13 +88,13 @@ public class ClientOrderRegistController{
      */
     @RequestMapping(path = "/client/order/payment/input", method = RequestMethod.POST)
 	public String orderNextPayment(@Valid @ModelAttribute OrderForm orderForm, BindingResult result, Model model) {
-    	// セッションから注文フォームを取得
-    	orderForm = (OrderForm) session.getAttribute("orderForm");
 		if(result.hasErrors()) {
 			// エラー情報をセッションに保存
 			session.setAttribute("errors", result);
 			return "redirect:/client/order/address/input";
 		}
+		       //セッションスコープに保存を追加（指)
+		    session.setAttribute("orderForm", orderForm);
 		    return "redirect:/client/order/payment/input";
 	}
     
