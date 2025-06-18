@@ -176,7 +176,7 @@ public class ClientOrderRegistController{
         orderItemList.add(orderItem);
             }
         保存する形を"totalamount"から"total"に変更しました
-		model.addAttribute("totalAmount//total//", totalAmount);
+		model.addAttribute("total", totalAmount);
 		model.addAttribute("orderItemBeans", orderItemList);
 		model.addAttribute("orderForm", orderForm);
 		return "client/order/check";
@@ -240,8 +240,8 @@ public class ClientOrderRegistController{
             orderItemRepository.save(orderItem);
 
 	　　// 在庫を減少させる
-            //item.setStock(item.getStock() - basket.getOrderNum());
-            //itemRepository.save(item);
+            item.setStock(item.getStock() - basket.getOrderNum());
+            itemRepository.save(item);
         }
         
      // セッションデータのクリア
