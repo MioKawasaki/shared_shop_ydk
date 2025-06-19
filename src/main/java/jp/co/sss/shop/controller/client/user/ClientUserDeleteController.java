@@ -46,6 +46,9 @@ public class ClientUserDeleteController {
 		User users = userOpt.get();
 		users.setDeleteFlag(1);
 		userRepository.save(users);
+		//追加↓
+		session.removeAttribute("user");
+		//↑
 		return "client/user/delete_complete";
 	}
 }
